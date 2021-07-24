@@ -1,0 +1,158 @@
+struct Node {
+    int64_t val;       // offset 0    size 8
+    struct Node* next; // offset 8    size 8
+    int64_t xyz;       // offset 16   size 8
+    int8_t w;          // offset 24   size 1
+};
+
+Node* ptr = ...;
+ptr->xyz = 1234;
+
+int64_t ptr = ...;
+store 8 bytes of {1234} to address {ptr+16}
+
+
+
+Node* ptr = ...;
+ptr->w = 123;
+
+int64_t ptr = ...;
+store 1 byte of {123} to address {ptr+24}
+
+
+
+RAM
+
+write(address: int, value: int, byte_count: int) -> None
+read(adderss: int, byte_count: int) -> int
+
+
+
+PART 1
+
+A *data type* is a number with a particular size, one of: 1 byte, 2 bytes, 4 bytes, 8 bytes. For example:
+
+char / int8_t means 1 byte number
+short / int16_t means 2 byte number
+int / int32_t means 4 byte number
+long / int64_t means 8 byte number
+
+The only difference between these is how big are the numbers you can store in them. Sometimes if we only 
+need to store very small numbers (e.g. between 0 and 256), we use char. Sometimes if we want to store big
+numbers (e.g. between 0 and 2^64-1 or between -2^63 and 2^63-1), we use long/int64_t. We could always use
+int64_t but if we know that we're only storing small numbers, it's a waste of memory. This is the only
+difference.
+
+
+A pointer is an 8 byte number. Its syntax is datatype*. The only differences between a pointer and a
+long/int64_t are:
+
+* The C language does not allow you to add two pointers together. It could allow this because they're just
+  numbers, but usually if you do this it is by accident and is a logic error. You basically never want to
+  do this in actual programs.
+* The C language does not allow you to multiply pointers by anything. Same as above.
+* If you have a pointer ptr, the C language defines the following syntax:
+    *ptr
+  For example,
+    int* ptr;
+    int x = *ptr;
+  This tells the CPU to go to address {ptr} and read 4 bytes and store the result in the variable x.
+  Similarly,
+    int* ptr;
+    *ptr = 1234;
+  This tells the CPU to store 4 bytes with contents 1234 into the address {ptr}.
+* If you have a local variable x, the C language defines the following syntax:
+    &x
+  For example,
+    int x;
+    int* ptr = &x;
+  This means get the address of the variable x in the stack frame and store that number in the ptr variable.
+  If you then do
+    *ptr = 1234;
+  Then x will contain 1234.
+ * Extra example:
+    int x = 1;
+    int y = 2;
+    int* ptr = &x;
+    *ptr = 3;
+    ptr = &y;
+    *ptr = 4;
+    // Now x == 3 and y == 4
+
+PART 2
+
+The C language defines "struct". This specifies the layout of a block of memory like this:
+
+    struct Asdf {
+        datatype1 field1;
+        datatype2 field2;
+        datatype3 field3;
+    };
+
+A struct is also a datatype. It is a collection of numbers that are stored next to each other in memory.
+
+For example:
+
+    struct MyStruct {
+        int x;      // offset 0, size 4
+        int y;      // offset 4, size 4
+        int* z;     // offset 8, size 8
+    };
+    sizeof(MyStruct) == 16
+
+    int main() {
+        MyStruct my_struct; // When your function runs, the operating system allocates 16 bytes in the stack frame to store my_struct
+    }
+
+This is equivalent to doing
+
+    int main() {
+        int x;
+        int y;
+        int* z;
+    }
+
+It is more convenient though.
+
+Now if you have a pointer ptr to some struct (SomeStruct*) the C language defines a new syntax:
+
+    ptr->field
+
+For example,
+
+    MyStruct* my_struct = ...;
+    my_struct->y = 1234; 
+    int asdf = my_struct->y;
+
+If you do
+
+    ptr->field = value;
+
+This means
+
+    *({ptr + offset of field}) = value
+
+Similar for reading from the field.
+
+You can do
+
+    MyStruct* my_struct = ...;
+    int* y = &my_struct->y; // &(my_struct->y)
+    // As addresses, y is equal to my_struct + offset of y (i.e. my_struct + 4).
+
+Another example
+
+    void func(MyStruct* my_struct) {
+        my_struct->y = 1234;
+    }
+
+Suppose my_struct is address 1000. Then this says
+
+    1. Compute the address 1000 + {offset of y} = 1000 + 4 = 1004.
+    2. Store 4 bytes with contents 1234 to address 1004.
+
+The caller would do
+
+    MyStruct blah;
+    func(&blah);
+    // blah.y == 1234
