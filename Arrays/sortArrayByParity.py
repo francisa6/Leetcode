@@ -23,7 +23,7 @@ from typing import List
 #                 j += 1
 #         return nums
 
-
+# O(n) because j moves in one direction and e moves in one direction and only 1 pass through the list
 def sortArrayByParity(nums: List[int]) -> List[int]:
 
     # count_even = start odd

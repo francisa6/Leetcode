@@ -18,6 +18,8 @@ def binarySearchRecursive(arr: List[int], target: int) -> Optional[int]:
 
 
 # Return index of target in arr if found. Return None if not found.
+# Time complexity: O(log(n))
+# Space complexity: O(1)
 def binarySearch(arr: List[int], target: int) -> Optional[int]:
     # get middle value
 
@@ -36,7 +38,7 @@ def binarySearch(arr: List[int], target: int) -> Optional[int]:
             return middle
         else:
             right = middle - 1
-                                                    
+
 
 arr = [-50, 20, 30, 31, 40, 99, 100]
 index = binarySearch(arr, 40)
