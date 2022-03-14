@@ -9,4 +9,5 @@ def factorial(n):
         return 1
 
 
-factorial(4)
+print(factorial(4))
+
