@@ -36,6 +36,7 @@ from typing import List
 #                 n -= 1
 
 
+# Time complexity O(m + n)
 def merge(nums1: List[int], m: int, nums2: List[int], n: int) -> None:
     # ind - full list
     # m - nums1

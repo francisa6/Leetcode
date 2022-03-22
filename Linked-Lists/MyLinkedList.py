@@ -3,9 +3,10 @@
 # Define what a node looks like! It has two attributes a value and a reference to the next node
 class Node(object):
     def __init__(self, val):
+        # We define a node to have a val and next component (this is like defining a struct in C).
+        # val is an int and next is a pointer
         self.val = val
         self.next = None
-        self.xyz = 1234
 
 
 class MyLinkedList:
@@ -14,6 +15,7 @@ class MyLinkedList:
         Initialize your data structure here.
         """
         # Initalise the linked list. It has head equals to None value and has length zero!
+        # head is a pointer and size is a value. We are initialising the linkedin list here.
         self.head = None
         self.size = 0
 
@@ -93,7 +95,11 @@ class MyLinkedList:
             for _ in range(1, index):
                 curr_node = curr_node.next
             # index node -1 should be the last curr_node
-            # How to store a whole node in?
+            # Here we want to replace the pointer in node i-1 with the pointer in node i. The next line of code does that replacement.
+
+            # curr_node is a pointer. It is a special number. curr_node.next is also a pointer
+            # it represents the memory address of the next node. Apply curr_node.next.next (the pointer in the node that we want to delete) then
+            # accesses yet another pointer. This is the address of the node that we want to join with the previous node.
             curr_node.next = curr_node.next.next
 
             self.size -= 1
