@@ -17,7 +17,7 @@ class Solution:
         else:
             return max(self.maxDepth(root.left), self.maxDepth(root.right)) + 1
 
-
+    
 class Solution2:
     def __init__(self):
         self.answer = 0
@@ -27,7 +27,6 @@ class Solution2:
         print(root)
         # Base case
         if root is None:
-            print("hi", self.answer)
             return 
 
         # Find the maximum depth by comparing each of the max depths for
